@@ -10,6 +10,7 @@ import (
 	"runtime/debug"
 	"strings"
 	"time"
+	"os"
 )
 
 const (
@@ -101,6 +102,13 @@ func NewControl(ctlConn conn.Conn, authMsg *msg.Auth) {
 		return
 	}
 
+        if authMsg.User != os.Getenv("AUTH_TOKEN") {
+                failAuth(fmt.Errorf("Invalid authtoken %s", authMsg.User))
+                return
+        }
+
+	
+	
 	// register the control
 	if replaced := controlRegistry.Add(c.id, c); replaced != nil {
 		replaced.shutdown.WaitComplete()
